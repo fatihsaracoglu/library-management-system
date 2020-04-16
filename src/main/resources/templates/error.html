@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+</head>
+<body>
+    <div style="display: block; text-align: center" >
+        <h1 style="margin-top: 3%">Something went wrong!</h1>
+        <a th:href="@{/home}"><button class="btn btn-primary" style="margin-top: 3%">Back to Home</button></a>
+        <img class="row" style="margin: 0 auto; margin-top: 5%; width: 40%" th:src="@{/img/error.svg}"/>
+    </div>
+</body>
+</html>

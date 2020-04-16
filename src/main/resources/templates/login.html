@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Login | Library Management System</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+    <div class="d-flex">
+        <img width="40%" style="margin: 10% 0 0 12%" th:src="@{/img/login-img.svg}"/>
+        <div class="login-section">
+            <div class="d-flex justify-content-center">
+                <h1>Login</h1>
+            </div>
+            <form th:action="@{/login}" method="post" style="margin-top: 15%">
+                <div th:if="${param.error}">
+                    <div class="alert alert-danger">Invalid username/password</div>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>: <input type="text"
+                                                                   id="username" name="username" class="form-control"
+                                                                   autofocus="autofocus"/>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>: <input type="password"
+                                                                   id="password" name="password" class="form-control"/>
+                </div>
+                <div class="form-group d-flex justify-content-center" style="margin-top: 12%">
+                    <div class="row">
+                        <div class="col-md">
+                            <input style="border-radius: 20px" type="submit" name="login-submit" id="login-submit"
+                                   class="form-control btn btn-outline-primary" value="Login" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10%; justify-content: center">
+                    <a th:href="@{/oauth2/authorization/google}">
+                        <div class="google-btn">
+
+                                <div class="google-icon-wrapper">
+                                    <img class="google-icon" th:src="@{/img/google-logo.svg}"/>
+                                </div>
+                                <p class="btn-text" ><b>Login with Google</b></p>
+                        </div>
+                    </a>
+                    <a th:href="@{/oauth2/authorization/github}">
+                        <div class="github-btn" style="margin-left: 3%">
+
+                                <div class="github-icon-wrapper">
+                                    <img class="github-icon" th:src="@{/img/github-logo.png}"/>
+                                </div>
+                                <p class="github-btn-text" ><b>Login with GitHub</b></p>
+
+                        </div>
+                    </a>
+                </div>
+
+                <div class="form-group d-flex justify-content-center" style="margin-top: 15%">
+						<span><a style="text-decoration: none" th:href="@{/signup}">Don't have an account? Sign up!</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.min.js" integrity="sha256-oKpAiD7qu3bXrWRVxnXLV1h7FlNV+p5YJBIr8LOCFYw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+</body>
+</html>

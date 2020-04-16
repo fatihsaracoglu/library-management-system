@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Library Management System</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="/admin">Library Management System</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="/admin"></button>
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0" method="post" th:action="@{/logout}">
+            <button class="btn btn-sm btn-danger my-2 my-sm-0" style="border-radius: 10px" type="submit">Logout</button>
+        </form>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <a class="nav-link" href="/admin"><div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>Dashboard</a>
+                        <a class="nav-link" href="/home"><div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>Home</a>
+                        <div class="sb-sidenav-menu-heading">Details</div>
+                        <nav class="sb-sidenav-menu-nested nav"><a class="nav-link"
+                                                                   href="/admin/books">Books</a><a
+                                class="nav-link" href="/admin/authors">Authors</a>
+                        </nav>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    <div class="row" style="margin: 5% 5% 0 0">
+                        <h3>Author List</h3>
+                        <button style="margin-left: 4%; float: right" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addModal">Add Author</button>
+                        <input class="form-control" id="myInput" style="margin-left: 5%; width: 30%" type="text" placeholder="Search author..." />
+                    </div>
+                    <table style="margin-top: 5%" class="table table-stripped" id="dev-table">
+                        <thead>
+                        <tr>
+                            <td>ID</td>
+                            <td>Name</td>
+                            <td>Books</td>
+                            <td>Description</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </thead>
+                        <tbody class="myTable">
+                        <tr th:each="author:${authors}">
+                            <td th:text="${author.id}">ID</td>
+                            <td style="width: 15%" th:text="${author.name}"></td>
+                            <td style="width: 25%" th:text="${author.books}"></td>
+                            <td style="width: 40%" th:text="${author.description}"></td>
+                            <td><a th:href="@{/admin/authors/author/(id=${author.id})}" class="btn btn-sm btn-warning"><i class="far fa-edit"></i></a>
+                                <a th:href="@{/admin/authors/delete/(id=${author.id})}" class="btn btn-sm btn-danger" id="deleteButton"><i class="far fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <form id="addForm" th:action="@{/admin/authors/add}" th:object="${author}" method="post">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">New Author</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="recipient-name" name="name">
+                                </div>
+
+                                <div id="bookList">
+                                    <div class="row">
+                                        <div class="col form-group">Books:</div>
+                                    </div>
+                                    <div class="col form-group d-none">
+                                        <input type="text" class="form-control" id="books-field" name="books">
+                                    </div>
+                                    <div id="frm">
+                                        <div class="row item">
+                                            <div class="col form-group">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Add new input-->
+                                <div class="row" style="margin-left: 2%">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addRow()"><i class="fas fa-plus"></i> Add Book</button>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Description:</label>
+                                    <input type="text" class="form-control" id="recipient-name" name="description">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+                <form th:action="@{/admin/authors/edit}" method="post">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel">Edit Author</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">ID:</label>
+                                    <input type="text" class="form-control" id="idEdit" name="id" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="nameEdit" name="name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Books:</label>
+                                    <input type="text" class="form-control" id="booksEdit" name="books">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Description:</label>
+                                    <input type="text" class="form-control" id="descriptionEdit" name="description">
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="modal" tabindex="-1" role="dialog" id="deleteModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Deletion</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure to delete?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="" class="btn btn-primary" id="delRef">Delete</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">2020 Fatih Saraçoğlu</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.min.js" integrity="sha256-oKpAiD7qu3bXrWRVxnXLV1h7FlNV+p5YJBIr8LOCFYw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+    <script type="text/javascript" th:src="@{/js/author.js}"></script>
+    <script type="text/javascript" th:src="@{/js/filter.js}"></script>
+</body>
+</html>

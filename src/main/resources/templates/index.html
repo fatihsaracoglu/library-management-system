@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <title>Home | Library Management System</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
+        <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    </head>
+
+    <body>
+        <div role="main" class="container index-page">
+            <div class="starter-template">
+                <nav class="navbar navbar-light bg-light justify-content-between" style="border-bottom: 6px solid #2F4F4F">
+                    <a class="navbar-brand">Library Management System</a>
+                    <div class="dropdown" style="float:right">
+                        <a class="nav-link dropdown-toggle" id="userDropdown" href="#options" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                            <div th:unless="${#authorization.expression('hasRole(''ADMIN'')')}">
+                                <form method="post" th:action="@{/logout}">
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </div>
+                            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                                <a class="dropdown-item" th:href="@{/admin}">Admin Dashboard</a>
+                                <div class="dropdown-divider"></div>
+                                <form method="post" th:action="@{/logout}">
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                <input class="form-control" id="myInput" type="text" placeholder="Search book, author, publisher..." />
+            </div>
+
+            <section id="tabs" class="project-tab">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nav>
+                                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#books" role="tab" aria-controls="nav-home" aria-selected="true">Books</a>
+                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#authors" role="tab" aria-controls="nav-profile" aria-selected="false">Authors</a>
+                                </div>
+                            </nav>
+                            <div class="tab-content" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="books" role="tabpanel" aria-labelledby="nav-home-tab">
+                                    <div class="ui items" style="margin: 5% 5% 5% 5% !important;">
+                                        <div class="item" th:each="book:${books}" style="border: 1px solid black; border-radius: 10px; padding: 3%">
+                                            <div class="content">
+                                                <p class="header" th:text="${book.name}">Header</p>
+                                                <div class="meta">
+                                                    <span th:text="${book.author}">Description</span>
+                                                </div>
+                                                <div class="description">
+                                                    <p th:text="${book.description}" style="width: 70vh; text-overflow:ellipsis; overflow : hidden; white-space: nowrap;"></p>
+                                                </div>
+                                                <div class="extra" style="margin-top: 2%">
+                                                    <div class="ui label" th:text="${book.publisher}"></div>
+                                                    <button th:href="@{/home/book/(id=${book.id})}" class="btn btn-sm btn-outline-primary my-2 my-sm-0" id="book-btn" style="border-radius: 10px" type="submit">View</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="authors" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                    <div class="ui items" style="margin: 5% 5% 0 5% !important;">
+                                        <div class="item" th:each="author:${authors}" style="border: 1px solid black; border-radius: 10px; padding: 3%">
+                                            <div class="content">
+                                                <p class="header" th:text="${author.name}">Header</p>
+                                                <div class="description">
+                                                    <p th:text="${author.description}" style="width: 70vh; text-overflow:ellipsis; overflow : hidden; white-space: nowrap;"></p>
+                                                </div>
+                                                <div class="extra" style="margin-top: 2%">
+                                                    <button th:href="@{/home/author/(id=${author.id})}" class="btn btn-sm btn-outline-primary my-2 my-sm-0" id="author-btn" style="border-radius: 10px" type="submit">View</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal fade" id="bookDetailModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+            <form>
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="bookModalLabel">Book Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-borderless">
+                                <tbody>
+                                <tr>
+                                    <td>Title:</td>
+                                    <td><p id="name" style="margin-left: 3%"></p></td>
+                                </tr>
+                                <tr>
+                                    <td>Author:</td>
+                                    <td><p id="author" style="margin-left: 3%"></td>
+                                </tr>
+                                <tr>
+                                    <td>Publisher:</td>
+                                    <td><p id="publisher" style="margin-left: 3%"></td>
+                                </tr>
+                                <tr>
+                                    <td>Page Count:</td>
+                                    <td><p id="page" style="margin-left: 3%"></td>
+                                </tr>
+                                <tr>
+                                    <td>ISBN:</td>
+                                    <td><p id="isbn" style="margin-left: 3%"></td>
+                                </tr>
+                                <tr>
+                                    <td>Publish Date:</td>
+                                    <td><p id="date" style="margin-left: 3%"></td>
+                                </tr>
+                                <tr>
+                                    <td>Description:</td>
+                                    <td><p id="description" style="margin-left: 3%"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal fade" id="authorDetailModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+            <form>
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="authorModalLabel">Author Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-borderless">
+                                <tbody>
+                                <tr>
+                                    <td>Name:</td>
+                                    <td><p id="author-name" style="margin-left: 3%"></p></td>
+                                </tr>
+                                <tr>
+                                    <td>Books:</td>
+                                    <td><p id="author-books" style="margin-left: 3%"></td>
+                                </tr>
+                                <tr>
+                                    <td>Description:</td>
+                                    <td><p id="author-desc" style="margin-left: 3%"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.min.js" integrity="sha256-oKpAiD7qu3bXrWRVxnXLV1h7FlNV+p5YJBIr8LOCFYw=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+        <script type="text/javascript" th:src="@{/js/detail-modal.js}"></script>
+
+        <script>
+            jQuery("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                jQuery(".item").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        </script>
+    </body>
+</html>
